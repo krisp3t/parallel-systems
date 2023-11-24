@@ -5,7 +5,7 @@
 #include <time.h>
 
 #define NUM_THREADS 4
-#define ARRAY_SIZE 100
+#define ARRAY_SIZE 10000
 #define ROUND(x) (int)(x + 0.5)
 
 typedef struct
@@ -25,7 +25,7 @@ pthread_t thread[NUM_THREADS];
 pthread_barrier_t barrier;
 thread_args_T thread_args[NUM_THREADS];
 
-void *(thread_func)(void *arg) {}
+void *(thread_func)(void *arg);
 void *(*thread_func_ptr)(void *arg) = thread_func;
 
 void print_array(unsigned int *pArray)
@@ -80,6 +80,7 @@ void *thread_func(void *args)
 
 int main(int argc, char const *argv[])
 {
+    srand(time(NULL));
     // Initialize array
     for (int i = 0; i < ARRAY_SIZE; i++)
     {
@@ -112,7 +113,7 @@ int main(int argc, char const *argv[])
         pthread_join(thread[i], NULL);
     }
     clock_gettime(CLOCK_REALTIME, &timeStop);
-    double elapsedTime = (timeStop.tv_sec - timeStart.tv_sec) / 1e9;
+    double elapsedTime = (timeStop.tv_sec - timeStart.tv_sec) + (timeStop.tv_nsec - timeStart.tv_nsec) / 1e9;
     pthread_barrier_destroy(&barrier);
 
     printf("Sorted array: ");
